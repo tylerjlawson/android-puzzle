@@ -3,6 +3,7 @@ package edu.msu.lawsont2.puzzle;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -62,5 +63,23 @@ public class PuzzleView extends View {
         return puzzle.onTouchEvent(this, event);
     }
 
+    /**
+     * Save the puzzle to a bundle
+     * @param bundle The bundle we save to
+     */
+    public void saveInstanceState(Bundle bundle) {
+        puzzle.saveInstanceState(bundle);
+    }
 
+    /**
+     * Load the puzzle from a bundle
+     * @param bundle The bundle we save to
+     */
+    public void loadInstanceState(Bundle bundle) {
+        puzzle.loadInstanceState(bundle);
+    }
+
+    public Puzzle getPuzzle() {
+        return puzzle;
+    }
 }

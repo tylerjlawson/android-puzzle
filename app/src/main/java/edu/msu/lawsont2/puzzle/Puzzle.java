@@ -2,10 +2,12 @@ package edu.msu.lawsont2.puzzle;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -82,6 +84,13 @@ public class Puzzle {
      */
     private static Random random = new Random();
 
+    /**
+     * The name of the bundle keys to save the puzzle
+     */
+    private final static String LOCATIONS = "Puzzle.locations";
+    private final static String IDS = "Puzzle.ids";
+
+    private View theView;
 
     public Puzzle(Context context) {
 
@@ -97,11 +106,11 @@ public class Puzzle {
 
         // Load the puzzle pieces
         pieces.add(new PuzzlePiece(context, R.drawable.sparty1,0.259f,0.238f));
-        pieces.add(new PuzzlePiece(context, R.drawable.sparty2, 0.666f, 0.158f));
-        pieces.add(new PuzzlePiece(context, R.drawable.sparty3, 0.741f, 0.501f));
-        pieces.add(new PuzzlePiece(context, R.drawable.sparty4, 0.341f, 0.519f));
-        pieces.add(new PuzzlePiece(context, R.drawable.sparty5, 0.718f, 0.834f));
-        pieces.add(new PuzzlePiece(context, R.drawable.sparty6, 0.310f, 0.761f));
+//        pieces.add(new PuzzlePiece(context, R.drawable.sparty2, 0.666f, 0.158f));
+//        pieces.add(new PuzzlePiece(context, R.drawable.sparty3, 0.741f, 0.501f));
+//        pieces.add(new PuzzlePiece(context, R.drawable.sparty4, 0.341f, 0.519f));
+//        pieces.add(new PuzzlePiece(context, R.drawable.sparty5, 0.718f, 0.834f));
+//        pieces.add(new PuzzlePiece(context, R.drawable.sparty6, 0.310f, 0.761f));
 
         outlinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         outlinePaint.setColor(0xff008000);
@@ -185,6 +194,7 @@ public class Puzzle {
         // Convert an x,y location to a relative location in the
         // puzzle.
         //
+        theView = view;
 
         float relX = (event.getX() - marginX) / puzzleSize;
         float relY = (event.getY() - marginY) / puzzleSize;
@@ -239,10 +249,13 @@ public class Puzzle {
                     AlertDialog.Builder builder =
                             new AlertDialog.Builder(view.getContext());
 
+                    ShuffleListener listener = new ShuffleListener();
+
                     // Parameterize the builder
                     builder.setTitle(R.string.hurrah);
                     builder.setMessage(R.string.completed_puzzle);
                     builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setNegativeButton(R.string.shuffle, listener);
 
                     // Create the dialog box and show it
                     AlertDialog alertDialog = builder.create();
@@ -254,6 +267,14 @@ public class Puzzle {
         }
 
         return false;
+    }
+
+    private class ShuffleListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            shuffle();
+            theView.invalidate();
+        }
     }
 
     /**
@@ -276,6 +297,57 @@ public class Puzzle {
     public void shuffle() {
         for(PuzzlePiece piece : pieces) {
             piece.shuffle(random);
+        }
+    }
+
+    /**
+     * Save the puzzle to a bundle
+     * @param bundle The bundle we save to
+     */
+    public void saveInstanceState(Bundle bundle) {
+        float [] locations = new float[pieces.size() * 2];
+        int [] ids = new int[pieces.size()];
+
+        for(int i=0;  i<pieces.size(); i++) {
+            PuzzlePiece piece = pieces.get(i);
+            locations[i*2] = piece.getX();
+            locations[i*2+1] = piece.getY();
+            ids[i] = piece.getId();
+        }
+
+        bundle.putFloatArray(LOCATIONS, locations);
+        bundle.putIntArray(IDS,  ids);
+    }
+
+    /**
+     * Read the puzzle from a bundle
+     * @param bundle The bundle we save to
+     */
+    public void loadInstanceState(Bundle bundle) {
+        float [] locations = bundle.getFloatArray(LOCATIONS);
+        int [] ids = bundle.getIntArray(IDS);
+
+        for(int i=0; i<ids.length-1; i++) {
+
+            // Find the corresponding piece
+            // We don't have to test if the piece is at i already,
+            // since the loop below will fall out without it moving anything
+            for(int j=i+1;  j<ids.length;  j++) {
+                if(ids[i] == pieces.get(j).getId()) {
+                    // We found it
+                    // Yah...
+                    // Swap the pieces
+                    PuzzlePiece t = pieces.get(i);
+                    pieces.set(i, pieces.get(j));
+                    pieces.set(j, t);
+                }
+            }
+        }
+
+        for(int i=0;  i<pieces.size(); i++) {
+            PuzzlePiece piece = pieces.get(i);
+            piece.setX(locations[i*2]);
+            piece.setY(locations[i*2+1]);
         }
     }
 }
