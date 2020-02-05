@@ -12,6 +12,7 @@ import android.view.View;
 /**
  * Custom view class for our Puzzle.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class PuzzleView extends View {
 
     /**
@@ -52,8 +53,6 @@ public class PuzzleView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-
 
         puzzle.draw(canvas);
     }

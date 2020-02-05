@@ -328,6 +328,7 @@ public class Puzzle {
      * Read the puzzle from a bundle
      * @param bundle The bundle we save to
      */
+    @SuppressWarnings("ConstantConditions")
     public void loadInstanceState(Bundle bundle) {
         float [] locations = bundle.getFloatArray(LOCATIONS);
         int [] ids = bundle.getIntArray(IDS);
