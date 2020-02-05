@@ -106,11 +106,11 @@ public class Puzzle {
 
         // Load the puzzle pieces
         pieces.add(new PuzzlePiece(context, R.drawable.sparty1,0.259f,0.238f));
-//        pieces.add(new PuzzlePiece(context, R.drawable.sparty2, 0.666f, 0.158f));
-//        pieces.add(new PuzzlePiece(context, R.drawable.sparty3, 0.741f, 0.501f));
-//        pieces.add(new PuzzlePiece(context, R.drawable.sparty4, 0.341f, 0.519f));
-//        pieces.add(new PuzzlePiece(context, R.drawable.sparty5, 0.718f, 0.834f));
-//        pieces.add(new PuzzlePiece(context, R.drawable.sparty6, 0.310f, 0.761f));
+        pieces.add(new PuzzlePiece(context, R.drawable.sparty2, 0.666f, 0.158f));
+        pieces.add(new PuzzlePiece(context, R.drawable.sparty3, 0.741f, 0.501f));
+        pieces.add(new PuzzlePiece(context, R.drawable.sparty4, 0.341f, 0.519f));
+        pieces.add(new PuzzlePiece(context, R.drawable.sparty5, 0.718f, 0.834f));
+        pieces.add(new PuzzlePiece(context, R.drawable.sparty6, 0.310f, 0.761f));
 
         outlinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         outlinePaint.setColor(0xff008000);
@@ -151,12 +151,17 @@ public class Puzzle {
         canvas.save();
         canvas.translate(marginX, marginY);
         canvas.scale(scaleFactor, scaleFactor);
-        // canvas.drawBitmap(puzzleComplete, 0, 0, null);
-        canvas.restore();
 
-        for(PuzzlePiece piece : pieces) {
-            piece.draw(canvas, marginX, marginY, puzzleSize, scaleFactor);
+        if (isDone()) {
+            canvas.drawBitmap(puzzleComplete, 0, 0, null);
+            canvas.restore();
+        } else {
+            canvas.restore();
+            for(PuzzlePiece piece : pieces) {
+                piece.draw(canvas, marginX, marginY, puzzleSize, scaleFactor);
+            }
         }
+
     }
 
     /**

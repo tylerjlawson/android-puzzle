@@ -1,6 +1,5 @@
 package edu.msu.lawsont2.puzzle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
